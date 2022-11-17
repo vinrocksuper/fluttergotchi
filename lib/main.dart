@@ -31,9 +31,13 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
+
+
   int myCount = 0;
   late Timer timer;
+  // I will want the timer to keep counting since this will be real time
   bool keepCounting = true;
+
   @override
   void initState() {
     super.initState();
@@ -78,8 +82,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
   }
 }
 
-// Where the Tamagotchi will be displayed
-// Name to be decided (since copyrighted by Bandani Namco)
+// Where the Fluttergotchi will be displayed
 class DisplayArea extends StatelessWidget {
   const DisplayArea({
     Key? key,
@@ -94,7 +97,7 @@ class DisplayArea extends StatelessWidget {
   }
 }
 
-// Since i'm building a tamagatchi type game, the nav bar isn't really a nav bar in the traditional sense
+// Since i'm building a tamagotchi inspired game, the nav bar isn't really a nav bar in the traditional sense
 // and instead they end up doing stuff instead of navigating
 class StatusControls extends StatelessWidget {
   const StatusControls({
