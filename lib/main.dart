@@ -31,8 +31,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
-
-
   int myCount = 0;
   late Timer timer;
   // I will want the timer to keep counting since this will be real time
@@ -71,13 +69,76 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
                 thickness: 6,
               ),
             ),
-            SizedBox(
-              width: double.infinity,
-              height: MediaQuery.of(context).size.height / 2.6,
-            ),
+            // SizedBox(
+            //   width: double.infinity,
+            //   height: MediaQuery.of(context).size.height / 2.6,
+
+            // ),
+            StatusArea(),
           ],
         ),
       ),
+    );
+  }
+}
+
+class StatusArea extends StatelessWidget {
+  const StatusArea({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        LinearProgressIndicator(
+          minHeight: 25,
+          value: .7,
+        ),
+        SizedBox(height: 25),
+        LinearProgressIndicator(
+          minHeight: 25,
+          value: .98,
+        ),
+        SizedBox(height: 25),
+        LinearProgressIndicator(
+          minHeight: 25,
+          value: .27,
+        ),
+        SizedBox(height: 25),
+        LinearProgressIndicator(
+          minHeight: 25,
+          value: .67,
+        ),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Divider(
+            color: Colors.black12,
+            thickness: 6,
+          ),
+        ),
+        Row(
+          children: [
+            Text("Age"),
+            VerticalDivider(
+              width: 20,
+              thickness: 100,
+              indent: 20,
+              endIndent: 0,
+              color: Colors.red,
+            ),
+            Text("Weight"),
+            VerticalDivider(
+              width: 20,
+              thickness: 100,
+              indent: 20,
+              endIndent: 0,
+              color: Colors.red,
+            ),
+            Text("Sickness"),
+          ],
+        )
+      ],
     );
   }
 }
