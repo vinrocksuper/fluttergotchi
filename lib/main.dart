@@ -91,51 +91,133 @@ class StatusArea extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        LinearProgressIndicator(
-          minHeight: 25,
-          value: .7,
+        Row(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Icon(Icons.fastfood_rounded),
+            ),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: LinearProgressIndicator(
+                  minHeight: 25,
+                  value: .7,
+                ),
+              ),
+            ),
+          ],
         ),
-        SizedBox(height: 25),
-        LinearProgressIndicator(
-          minHeight: 25,
-          value: .98,
+        Row(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Icon(Icons.clean_hands_rounded),
+            ),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: LinearProgressIndicator(
+                  minHeight: 25,
+                  value: .33,
+                ),
+              ),
+            ),
+          ],
         ),
-        SizedBox(height: 25),
-        LinearProgressIndicator(
-          minHeight: 25,
-          value: .27,
+        Row(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Icon(Icons.hotel_rounded),
+            ),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: LinearProgressIndicator(
+                  minHeight: 25,
+                  value: .27,
+                ),
+              ),
+            ),
+          ],
         ),
-        SizedBox(height: 25),
-        LinearProgressIndicator(
-          minHeight: 25,
-          value: .67,
+        Row(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Icon(Icons.local_hospital_rounded),
+            ),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: LinearProgressIndicator(
+                  minHeight: 25,
+                  value: .97,
+                ),
+              ),
+            ),
+          ],
         ),
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: Divider(
             color: Colors.black12,
             thickness: 6,
+            height: 15,
           ),
         ),
         Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            Text("Age"),
-            VerticalDivider(
-              width: 20,
-              thickness: 100,
-              indent: 20,
-              endIndent: 0,
-              color: Colors.red,
+            Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Text("Age"),
+                SizedBox(
+                  height: 25,
+                ),
+                Text("0")
+              ],
             ),
-            Text("Weight"),
-            VerticalDivider(
-              width: 20,
-              thickness: 100,
-              indent: 20,
-              endIndent: 0,
-              color: Colors.red,
+            SizedBox(
+              height: MediaQuery.of(context).size.height / 7.5,
+              child: VerticalDivider(
+                width: 6,
+                thickness: 6,
+                indent: 20,
+                endIndent: 0,
+                color: Colors.black12,
+              ),
             ),
-            Text("Sickness"),
+            Column(
+              children: [
+                Text("Weight"),
+                SizedBox(
+                  height: 25,
+                ),
+                Text("0")
+              ],
+            ),
+            SizedBox(
+              height: MediaQuery.of(context).size.height / 7.5,
+              child: VerticalDivider(
+                width: 6,
+                thickness: 6,
+                indent: 20,
+                endIndent: 0,
+                color: Colors.black12,
+              ),
+            ),
+            Column(
+              children: [
+                Text("Sickness"),
+                SizedBox(
+                  height: 25,
+                ),
+                Text("0")
+              ],
+            ),
           ],
         )
       ],
@@ -199,7 +281,7 @@ class StatusControls extends StatelessWidget {
           ),
           BottomNavigationBarItem(
             icon: Icon(
-              Icons.local_hospital_outlined,
+              Icons.healing,
             ),
             label: "",
           ),
