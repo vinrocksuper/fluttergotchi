@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_constructors, non_constant_identifier_names
 // ignore_for_file: prefer_const_literals_to_create_immutables
 import 'dart:async';
 import 'dart:math';
@@ -37,10 +37,14 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
   int myCount = 0;
   late Timer timer;
 
-  // Age handling
+  // Hidden Stats
   late Timer ageTimer;
-  int age = 0;
-  int timeUntilNextAge = 60;
+  int age = 1;
+  int timeUntilNextAge = 3600;
+  int health = 100;
+  int timeUntilNextFeeding = 0;
+  bool canEat = true;
+  int weight = 5;
 
   //Main stats
   int hunger = 50;
@@ -53,23 +57,28 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
 
   // Misc Tools
   Random rng = Random();
-  bool debug = true;
+  bool debug = false;
+  bool isAlive = true;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    timer = Timer.periodic(Duration(seconds: 5), (timer) {
+    timer = Timer.periodic(Duration(seconds: 30), (timer) {
       setState(() {
         decayStat();
       });
     });
 
-    ageTimer = Timer.periodic(Duration(minutes: 1), (timer) {
+    ageTimer = Timer.periodic(Duration(seconds: 1), (timer) {
       setState(() {
+        timeUntilNextFeeding--;
         timeUntilNextAge--;
         if (timeUntilNextAge == 0) {
           ageUp();
+        }
+        if (timeUntilNextFeeding <= 0) {
+          canEat = true;
         }
       });
     });
@@ -83,8 +92,10 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
   }
 
   void ageUp() {
-    age++;
-    timeUntilNextAge = 60;
+    setState(() {
+      age++;
+      timeUntilNextAge = 3600;
+    });
   }
 
   void decayStat() {
@@ -111,6 +122,11 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
           happiness = 0;
         }
       }
+      adjustHealth();
+    }
+
+    if (health <= 0) {
+      isAlive = false;
     }
   }
 
@@ -129,6 +145,10 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
                 color: Colors.black12,
                 thickness: 6,
               ),
+            ),
+            Visibility(
+              visible: index == 0,
+              child: FeedingArea(),
             ),
             Visibility(
               visible: index == 4,
@@ -156,6 +176,124 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
         ),
       ),
     );
+  }
+
+  Widget FeedingArea() {
+    return Column(
+      children: [
+        ElevatedButton.icon(
+          onPressed: () {
+            if (canEat) {
+              adjustStat(toAdjust: 'hunger', amount: 35);
+              adjustStat(toAdjust: 'happiness', amount: 15);
+              setState(() {
+                canEat = false;
+                timeUntilNextFeeding = 1800;
+              });
+            }
+          },
+          label: Text('Cake'),
+          icon: Icon(Icons.cake_rounded),
+        ),
+        ElevatedButton.icon(
+          onPressed: () {
+            if (canEat) {
+              adjustStat(toAdjust: 'hunger', amount: 55);
+              adjustStat(toAdjust: 'happiness', amount: 5);
+              adjustStat(toAdjust: 'cleanliness', amount: -10);
+              setState(() {
+                canEat = false;
+                timeUntilNextFeeding = 1800;
+              });
+            }
+          },
+          label: Text('Pizza'),
+          icon: Icon(Icons.local_pizza_rounded),
+        ),
+        ElevatedButton.icon(
+          onPressed: () {
+            if (canEat) {
+              adjustStat(toAdjust: 'hunger', amount: 50);
+              setState(() {
+                canEat = false;
+                timeUntilNextFeeding = 1800;
+              });
+            }
+          },
+          label: Text('Bread'),
+          icon: Icon(Icons.bakery_dining_rounded),
+        ),
+      ],
+    );
+  }
+
+  void adjustStat({toAdjust, amount}) {
+    switch (toAdjust) {
+      case 'hunger':
+        setState(() {
+          hunger += amount as int;
+        });
+        break;
+      case 'cleanliness':
+        setState(() {
+          cleanliness += amount as int;
+        });
+        break;
+      case 'energy':
+        setState(() {
+          energy += amount as int;
+        });
+        break;
+      case 'happiness':
+        setState(() {
+          happiness += amount as int;
+        });
+        break;
+      default:
+        break;
+    }
+  }
+
+  void adjustHealth() {
+    setState(() {
+      // Become sick if hungry/dirty/tired/depressed
+      if (hunger <= 0) {
+        health -= 2;
+      }
+
+      if (cleanliness <= 33) {
+        health -= 2;
+      } else if (cleanliness <= 66) {
+        health--;
+      }
+
+      if (energy <= 20) {
+        health--;
+      }
+
+      if (happiness < 33) {
+        health--;
+      }
+
+      // Alternatively become healthier if the opposite
+      if (hunger >= 85) {
+        health += 2;
+      } else if (hunger > 66) {
+        health++;
+      }
+
+      if (cleanliness >= 75) {
+        health++;
+      }
+
+      if (energy > 50) {
+        health++;
+      }
+
+      if (happiness > 75) {
+        health++;
+      }
+    });
   }
 
   Widget StatusControls() {
@@ -282,6 +420,22 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
             ),
           ],
         ),
+        Row(
+          children: [
+            Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Icon(Icons.local_hospital_rounded)),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: LinearProgressIndicator(
+                  minHeight: 25,
+                  value: health / 100,
+                ),
+              ),
+            ),
+          ],
+        ),
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: Divider(
@@ -335,36 +489,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
                   height: 25,
                 ),
                 Text(
-                  "0",
-                  style: TextStyle(
-                    fontSize: 24,
-                  ),
-                )
-              ],
-            ),
-            SizedBox(
-              height: MediaQuery.of(context).size.height / 7.5,
-              child: VerticalDivider(
-                width: 6,
-                thickness: 6,
-                indent: 20,
-                endIndent: 0,
-                color: Colors.black12,
-              ),
-            ),
-            Column(
-              children: [
-                Text(
-                  "Sickness",
-                  style: TextStyle(
-                    fontSize: 16,
-                  ),
-                ),
-                SizedBox(
-                  height: 25,
-                ),
-                Text(
-                  "0",
+                  weight.toString(),
                   style: TextStyle(
                     fontSize: 24,
                   ),
