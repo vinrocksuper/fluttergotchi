@@ -11,6 +11,36 @@
       "css": "gamepad",
       "code": 61723,
       "src": "fontawesome5"
+    },
+    {
+      "uid": "431225404705c838635b9686c35a2e1c",
+      "css": "bread_slice",
+      "code": 63468,
+      "src": "fontawesome5"
+    },
+    {
+      "uid": "37948269530d0cbe30f1f73489f0c517",
+      "css": "cheese",
+      "code": 59745,
+      "src": "rpgawesome"
+    },
+    {
+      "uid": "5e8b5b21bd598b9e40c826ac16a48f27",
+      "css": "hand_paper",
+      "code": 62038,
+      "src": "fontawesome5"
+    },
+    {
+      "uid": "5fce35772b17545895a755e1d875f328",
+      "css": "hand_rock",
+      "code": 62037,
+      "src": "fontawesome5"
+    },
+    {
+      "uid": "9bdb336f37b9d8d82af3eeec7fb80e12",
+      "css": "hand_scissors",
+      "code": 62039,
+      "src": "fontawesome5"
     }
   ]
 }

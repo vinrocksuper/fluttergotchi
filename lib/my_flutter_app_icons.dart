@@ -12,6 +12,10 @@
 ///       - asset: fonts/MyFlutterApp.ttf
 ///
 /// 
+/// * RPG Awesome, Copyright (c) 2014, Daniela Howe
+///         Author:    Daniela Howe & Ivan Montiel
+///         License:   SIL (http://scripts.sil.org/OFL)
+///         Homepage:  http://nagoshiashumari.github.io/Rpg-Awesome/
 /// * Font Awesome 5, Copyright (C) 2016 by Dave Gandy
 ///         Author:    Dave Gandy
 ///         License:   SIL (https://github.com/FortAwesome/Font-Awesome/blob/master/LICENSE.txt)
@@ -25,5 +29,10 @@ class MyFlutterApp {
   static const _kFontFam = 'MyFlutterApp';
   static const String? _kFontPkg = null;
 
+  static const IconData cheese = IconData(0xe961, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData gamepad = IconData(0xf11b, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData hand_rock = IconData(0xf255, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData hand_paper = IconData(0xf256, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData hand_scissors = IconData(0xf257, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData bread_slice = IconData(0xf7ec, fontFamily: _kFontFam, fontPackage: _kFontPkg);
 }

@@ -59,6 +59,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
   Random rng = Random();
   bool debug = false;
   bool isAlive = true;
+  bool isAsleep = false;
 
   @override
   void initState() {
@@ -98,31 +99,62 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
     });
   }
 
+  /// Technically a misnomer since it also increases stats if the fluttergotchi is asleep
+  /// 50% chance to decreases one of the main four stats randomly every 30 seconds
+  /// Or if asleep, 1/8 chance to decrease fullness/cleanliness, 1/4 chance to increase energy, 1/40 chance to increase happiness
   void decayStat() {
-    if (rng.nextBool()) {
-      int toDecay = rng.nextInt(100);
-      if (toDecay <= 25) {
-        hunger--;
-        if (hunger <= 0) {
-          hunger = 0;
+    if (!isAsleep) {
+      if (rng.nextBool()) {
+        int toDecay = rng.nextInt(100);
+        if (toDecay <= 25) {
+          hunger--;
+          if (hunger <= 0) {
+            hunger = 0;
+          }
+        } else if (toDecay <= 50) {
+          cleanliness--;
+          if (cleanliness <= 0) {
+            cleanliness = 0;
+          }
+        } else if (toDecay <= 75) {
+          energy--;
+          if (energy <= 0) {
+            energy = 0;
+          }
+        } else {
+          happiness--;
+          if (happiness <= 0) {
+            happiness = 0;
+          }
         }
-      } else if (toDecay <= 50) {
-        cleanliness--;
-        if (cleanliness <= 0) {
-          cleanliness = 0;
-        }
-      } else if (toDecay <= 75) {
-        energy--;
-        if (energy <= 0) {
-          energy = 0;
-        }
-      } else {
-        happiness--;
-        if (happiness <= 0) {
-          happiness = 0;
+        adjustHealth();
+      }
+    } else {
+      if (rng.nextBool() && rng.nextBool()) {
+        int toDecay = rng.nextInt(100);
+        if (toDecay <= 25) {
+          hunger--;
+          if (hunger <= 0) {
+            hunger = 0;
+          }
+        } else if (toDecay <= 50) {
+          cleanliness--;
+          if (cleanliness <= 0) {
+            cleanliness = 0;
+          }
+        } else {
+          energy++;
+          if (toDecay > 90) {
+            happiness++;
+            if (happiness > 100) {
+              happiness = 100;
+            }
+          }
+          if (energy > 100) {
+            energy = 100;
+          }
         }
       }
-      adjustHealth();
     }
 
     if (health <= 0) {
@@ -149,6 +181,18 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
             Visibility(
               visible: index == 0,
               child: FeedingArea(),
+            ),
+            Visibility(
+              visible: index == 1,
+              child: CleaningArea(),
+            ),
+            Visibility(
+              visible: index == 2,
+              child: SleepingArea(),
+            ),
+            Visibility(
+              visible: index == 3,
+              child: GameArea(),
             ),
             Visibility(
               visible: index == 4,
@@ -178,9 +222,116 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
     );
   }
 
+  Widget SleepingArea() {
+    return Column(
+      children: [
+        Row(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Icon(Icons.hotel_rounded),
+            ),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: LinearProgressIndicator(
+                  color: ProgressBarColor(energy),
+                  minHeight: 25,
+                  value: energy / 100,
+                ),
+              ),
+            ),
+          ],
+        ),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Divider(
+            color: Colors.black12,
+            thickness: 6,
+          ),
+        ),
+        ElevatedButton.icon(
+          onPressed: () {
+            setState(() {
+              isAsleep = !isAsleep;
+            });
+          },
+          label: !isAsleep ? Text('Sleep') : Text('Wake Up'),
+          icon: !isAsleep
+              ? Icon(Icons.airline_seat_individual_suite_sharp)
+              : Icon(Icons.sunny),
+        ),
+      ],
+    );
+  }
+
+  Widget CleaningArea() {
+    return Column(
+      children: [
+        Row(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Icon(Icons.clean_hands_rounded),
+            ),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: LinearProgressIndicator(
+                  color: ProgressBarColor(cleanliness),
+                  minHeight: 25,
+                  value: cleanliness / 100,
+                ),
+              ),
+            ),
+          ],
+        ),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Divider(
+            color: Colors.black12,
+            thickness: 6,
+          ),
+        ),
+        ElevatedButton.icon(
+          onPressed: () {
+            adjustStat(toAdjust: 'cleanliness', amount: 100);
+          },
+          label: Text('Shower'),
+          icon: Icon(Icons.shower_rounded),
+        ),
+      ],
+    );
+  }
+
   Widget FeedingArea() {
     return Column(
       children: [
+        Row(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Icon(Icons.fastfood_rounded),
+            ),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: LinearProgressIndicator(
+                  color: ProgressBarColor(hunger),
+                  minHeight: 25,
+                  value: hunger / 100,
+                ),
+              ),
+            ),
+          ],
+        ),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Divider(
+            color: Colors.black12,
+            thickness: 6,
+          ),
+        ),
         ElevatedButton.icon(
           onPressed: () {
             if (canEat) {
@@ -232,21 +383,33 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
       case 'hunger':
         setState(() {
           hunger += amount as int;
+          if (hunger > 100) {
+            hunger = 100;
+          }
         });
         break;
       case 'cleanliness':
         setState(() {
           cleanliness += amount as int;
+          if (cleanliness > 100) {
+            cleanliness = 100;
+          }
         });
         break;
       case 'energy':
         setState(() {
           energy += amount as int;
+          if (energy > 100) {
+            energy = 100;
+          }
         });
         break;
       case 'happiness':
         setState(() {
           happiness += amount as int;
+          if (happiness > 100) {
+            happiness = 100;
+          }
         });
         break;
       default:
@@ -350,6 +513,17 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
     );
   }
 
+  Color ProgressBarColor(value) {
+    if (value > 80) {
+      return Colors.green;
+    } else if (value > 60) {
+      return Colors.yellow;
+    } else if (value > 40) {
+      return Colors.orange;
+    }
+    return Colors.red;
+  }
+
   Widget StatusArea({hunger, cleanliness, energy, happiness, age}) {
     return Column(
       children: [
@@ -363,6 +537,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: LinearProgressIndicator(
+                  color: ProgressBarColor(hunger),
                   minHeight: 25,
                   value: hunger / 100,
                 ),
@@ -380,6 +555,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: LinearProgressIndicator(
+                  color: ProgressBarColor(cleanliness),
                   minHeight: 25,
                   value: cleanliness / 100,
                 ),
@@ -397,6 +573,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: LinearProgressIndicator(
+                  color: ProgressBarColor(energy),
                   minHeight: 25,
                   value: energy / 100,
                 ),
@@ -413,6 +590,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: LinearProgressIndicator(
+                  color: ProgressBarColor(happiness),
                   minHeight: 25,
                   value: happiness / 100,
                 ),
@@ -429,6 +607,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: LinearProgressIndicator(
+                  color: ProgressBarColor(health),
                   minHeight: 25,
                   value: health / 100,
                 ),
@@ -498,6 +677,54 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
             ),
           ],
         )
+      ],
+    );
+  }
+
+  Widget GameArea() {
+    return Column(
+      children: [
+        Row(
+          children: [
+            Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Icon(MyFlutterApp.gamepad)),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: LinearProgressIndicator(
+                  color: ProgressBarColor(happiness),
+                  minHeight: 25,
+                  value: happiness / 100,
+                ),
+              ),
+            ),
+          ],
+        ),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Divider(
+            color: Colors.black12,
+            thickness: 6,
+          ),
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            IconButton(
+              onPressed: () {},
+              icon: Icon(MyFlutterApp.hand_rock),
+            ),
+            IconButton(
+              onPressed: () {},
+              icon: Icon(MyFlutterApp.hand_paper),
+            ),
+            IconButton(
+              onPressed: () {},
+              icon: Icon(MyFlutterApp.hand_scissors),
+            ),
+          ],
+        ),
       ],
     );
   }
