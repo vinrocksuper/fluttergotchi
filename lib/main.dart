@@ -58,7 +58,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
 
   // Misc Tools
   Random rng = Random();
-  bool debug = true;
+  bool debug = false;
   bool isAlive = true;
   bool isAsleep = false;
   late SharedPreferences prefs;
@@ -318,6 +318,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
                   cleanliness = 60;
                   energy = 70;
                   happiness = 40;
+                  health = 70;
                   print(hunger);
                   print(cleanliness);
                   print(energy);
@@ -349,11 +350,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: LinearProgressIndicator(
-                  color: ProgressBarColor(energy),
-                  minHeight: 25,
-                  value: energy / 100,
-                ),
+                child: Progressbar(energy),
               ),
             ),
           ],
@@ -380,6 +377,18 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
     );
   }
 
+  Widget Progressbar(value) {
+    return ClipRRect(
+      borderRadius: BorderRadius.all(Radius.circular(10)),
+      child: LinearProgressIndicator(
+        color: ProgressBarColor(value),
+        backgroundColor: ProgressBarColor(value).withOpacity(.5),
+        minHeight: 25,
+        value: value / 100,
+      ),
+    );
+  }
+
   Widget CleaningArea() {
     return Column(
       children: [
@@ -392,11 +401,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: LinearProgressIndicator(
-                  color: ProgressBarColor(cleanliness),
-                  minHeight: 25,
-                  value: cleanliness / 100,
-                ),
+                child: Progressbar(cleanliness),
               ),
             ),
           ],
@@ -431,11 +436,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: LinearProgressIndicator(
-                  color: ProgressBarColor(hunger),
-                  minHeight: 25,
-                  value: hunger / 100,
-                ),
+                child: Progressbar(hunger),
               ),
             ),
           ],
@@ -554,6 +555,8 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
         health -= (1 * multiplier) as int;
       }
 
+      print(health);
+
       // Alternatively become healthier if the opposite
       if (hunger >= 85) {
         health += (2 * multiplier) as int;
@@ -571,6 +574,13 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
 
       if (happiness > 75) {
         health += (1 * multiplier) as int;
+      }
+
+      if(health < 0) {
+        health = 0;
+      } 
+      if(health > 100) {
+        health = 100;
       }
     });
   }
@@ -633,7 +643,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
     if (value > 80) {
       return Colors.green;
     } else if (value > 60) {
-      return Colors.yellow;
+      return Colors.amberAccent;
     } else if (value > 40) {
       return Colors.orange;
     }
@@ -652,11 +662,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: LinearProgressIndicator(
-                  color: ProgressBarColor(hunger),
-                  minHeight: 25,
-                  value: hunger / 100,
-                ),
+                child: Progressbar(hunger),
               ),
             ),
           ],
@@ -670,11 +676,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: LinearProgressIndicator(
-                  color: ProgressBarColor(cleanliness),
-                  minHeight: 25,
-                  value: cleanliness / 100,
-                ),
+                child: Progressbar(cleanliness),
               ),
             ),
           ],
@@ -688,11 +690,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: LinearProgressIndicator(
-                  color: ProgressBarColor(energy),
-                  minHeight: 25,
-                  value: energy / 100,
-                ),
+                child: Progressbar(energy),
               ),
             ),
           ],
@@ -705,11 +703,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: LinearProgressIndicator(
-                  color: ProgressBarColor(happiness),
-                  minHeight: 25,
-                  value: happiness / 100,
-                ),
+                child: Progressbar(happiness),
               ),
             ),
           ],
@@ -722,11 +716,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: LinearProgressIndicator(
-                  color: ProgressBarColor(health),
-                  minHeight: 25,
-                  value: health / 100,
-                ),
+                child: Progressbar(health),
               ),
             ),
           ],
@@ -811,11 +801,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: LinearProgressIndicator(
-                  color: ProgressBarColor(happiness),
-                  minHeight: 25,
-                  value: happiness / 100,
-                ),
+                child: Progressbar(happiness),
               ),
             ),
           ],
